@@ -8,4 +8,9 @@ grosor_pared_interior = 5.0 # cm
 grosor_fluido_exterior = 5.0 # cm
 grosor_pared_exterior = 5.0 # cm
 
-num_elems = 10 # #
+# Numeric
+num_elems = 10 #
+convergence_T = 0.005
+convergence_p = 0.003
+convergence_v = 0.001
+
