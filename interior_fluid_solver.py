@@ -1,6 +1,8 @@
+import numpy as np
+
 from main import p_in_interior, T_in_interior, v_in_interior
-from copy import deepcopy
 from gas_properties import cp_h2o, lambda_h2o, mu_h2o
+from CONSTANTS import length, epsilon_r
 
 
 def converge_interior_fluid(slices):
@@ -44,11 +46,26 @@ def converge_interior_fluid(slices):
             Di = 2 * (iteration_slices[i+1].radius + iteration_slices[i].radius)/2
 
             #   Empyrical coefficients
-            Rei = rhoi * vi *  Di / mui
-            Pri = mui * cpi / lambdai
+            Re = rhoi * vi *  Di / mui
+            Pr = mui * cpi / lambdai
+            Gz = Re * Pr * Di / length
 
-            
+            # Nusselt
+            if  Re < 2000 and Gz > 10:
+                nu_c = [1.86, 1/3, 1/3, (Di/length)**(1/3) * (mui / mu_h20(slice.T_interior_wall))**0.14]
+            elif  Re < 2000 and Gz < 10:
+                nu_c = [3.66, 0, 0, 1]
+            else:
+                nu_c = [3.66, 0, 0, 1]
+            Nu = nu_c[0] * Re**nu_c[1] * Pr**nu_c[2] * nu_c[3]
 
+            # Convective heat transfer coefficient
+            alpha = Nu * lambdai / Di
+
+            # Friction factor (Churchill expression)
+            fA = (2.475 * np.log(1 / ((7 / Re)**0.9 + 0.27*epsilon_r)))**16
+            fB = (37530 / Re)**16
+            f = 2 * ((8 / Re)**12 + 1 / (fA + fB)**(3 / 2))**(1/12)
 
     
     return iteration_slices
