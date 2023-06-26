@@ -17,6 +17,7 @@ class Slice:
 
         self.spline = CubicSpline(x1/100, y1/100)
         self.dx = length/num_elems
+        self.x = self.element_num * length/self.num_elems
 
         self.p_interior_fluid       = 0
         self.T_interior_fluid       = 0
