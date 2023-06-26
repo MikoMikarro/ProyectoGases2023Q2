@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 from gas_properties import cp_h2o, lambda_h2o, mu_h2o, cp_avg_h2o
 from copy import deepcopy
@@ -9,7 +10,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
     # Calculates the interior fluid properties throughout the nozzle
 
     Rg = 8.314 / 0.018015 # J/kgK (R g of water vapor)
-    Tr_start = 3700
+    Tr_start = 4000
 
     iteration_slices = deepcopy(slices)
 
@@ -87,7 +88,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
             # Linealized energy equation coefficients for solving the outlet velocity
             Ae = m_dot * cpi_avg + alpha / 2 * slice.lateral_area_interior_fluid
             Be = m_dot/2 + alpha * r / (4 * cpr_avg) * slice.lateral_area_interior_fluid
-            Ce = slice.T_interior_fluid * (m_dot * cpi_avg - alpha/2 * slice.lateral_area_interior_fluid) + slice.v_interior_fluid**2 * (m_dot - alpha * r / (4 * cpr_avg) * slice.lateral_area_interior_fluid) + slice.T_interior_wall * alpha * slice.lateral_area_interior_fluid
+            Ce = slice.T_interior_fluid * (m_dot * cpi_avg - alpha/2 * slice.lateral_area_interior_fluid) + slice.v_interior_fluid**2 * (m_dot/2 - alpha * r / (4 * cpr_avg) * slice.lateral_area_interior_fluid) + slice.T_interior_wall * alpha * slice.lateral_area_interior_fluid
             
             # Linealized overall coefficients for solving the outlet velocity
             A = Am * Ae * iteration_slices[i+1].cross_section_interior_fluid - Rg * m_dot * Bm * Be
@@ -95,7 +96,8 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
             C = Bm * Ce * Rg * m_dot
 
             # If negative discriminant return nonsense value
-            if B**2 - 4 * A * C:
+            if B**2 - 4 * A * C < 0:
+                print("error: negative discriminant in high mach flow")
                 iteration_slices[i].Tr_interior_fluid  = -1
                 iteration_slices[i].p_interior_fluid   = -1
                 iteration_slices[i].T_interior_fluid   = -1
@@ -105,9 +107,11 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
             
             else:
                 # Calculation of possible velocity values
-                vout_p = (B + (B**2 - 4 * A * C)) / (2 * A) # Valor sqrt de discriminante positivo
-                vout_n = (B - (B**2 - 4 * A * C)) / (2 * A) # Valor sqrt de discriminante negativo
-
+                vout_p = (- B + np.sqrt(B**2 - 4 * A * C)) / (2 * A) # Valor sqrt de discriminante positivo
+                vout_n = (- B - np.sqrt(B**2 - 4 * A * C)) / (2 * A) # Valor sqrt de discriminante negativo
+                print(vout_p)
+                print(vout_n)
+                
                 # Calculation of possible pressure values
                 pout_p = (Cm - vout_p * Am) / Bm
                 pout_n = (Cm - vout_n * Am) / Bm
@@ -168,6 +172,9 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
                     vout = vout_n
                     pout = pout_n
                     Tout = Tout_n
+
+                else:
+                    print("error: all generated entropy is negative")
                 
                 # Calculate recovery temperature and assign properties to the exit node
                 Ti = (iteration_slices[i].T_interior_fluid + Tout)/2
@@ -179,7 +186,13 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
                 iteration_slices[i+1].rho_interior_fluid = m_dot / (vout * iteration_slices[i+1].cross_section_interior_fluid)
 
                 # Check convergence
+                print(vout)
+                print(Tout)
+                print(pout)
+                time.sleep(1)
+                # print(abs(iteration_slices[i+1].Tr_interior_fluid - iteration_slices[i].Tr_interior_fluid))
                 if abs(iteration_slices[i+1].Tr_interior_fluid - iteration_slices[i].Tr_interior_fluid) < convergence_T:
+                    print(suuu)
                     break
     
     return iteration_slices
