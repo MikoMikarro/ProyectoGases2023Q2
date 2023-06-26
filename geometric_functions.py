@@ -35,7 +35,7 @@ class Slice:
         self.T_exterior_wall        = 0
 
     def lateral_area(self, extra_radius = 0):
-        x_vals = [length/self.num_elems * self.element_num, length/self.num_elems * (self.element_num + 1)]
+        x_vals = np.array([length/self.num_elems * self.element_num, length/self.num_elems * (self.element_num + 1)])/100
         r1, r2 = self.spline(x_vals)
         r1 += extra_radius
         r2 += extra_radius
