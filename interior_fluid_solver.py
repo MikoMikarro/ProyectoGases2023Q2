@@ -60,6 +60,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
             # Nusselt
             if  Re < 2000 and Gz > 10:
                 nu_c = [1.86, 1/3, 1/3, (Di/length)**(1/3) * (mui / mu_h2o(slice.T_interior_wall))**0.14]
+            
             elif  Re < 2000 and Gz < 10:
                 nu_c = [3.66, 0, 0, 1]
             else:

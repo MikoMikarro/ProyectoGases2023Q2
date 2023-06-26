@@ -1,8 +1,8 @@
 from CONSTANTS import num_elems
 from geometric_functions import Slice
 from copy import deepcopy
-#from interior_fluid_solver import converge_interior_fluid
-#from exterior_fluid_solver import converge_exterior_fluid
+from interior_fluid_solver import converge_interior_fluid
+from exterior_fluid_solver import converge_exterior_fluid
 from interior_wall_solver  import converge_interior_wall
 from exterior_wall_solver  import converge_exterior_wall
 # Start conditions
@@ -13,7 +13,6 @@ v_in_interior = 120 # m/s
 p_in_exterior = 1 * 101325 # Pa
 T_in_exterior = 34 # K
 v_in_exterior = 200 # m/s
-
 
 T_env         = 312 # K
 
@@ -41,8 +40,8 @@ def main():
         start_slices = deepcopy(iteration_slices)
         iteration_slices = deepcopy(start_slices)
 
-        #iteration_slices = converge_interior_fluid(iteration_slices, p_in_interior, T_in_interior, v_in_interior, p_in_exterior)
-        #iteration_slices = converge_exterior_fluid(iteration_slices)
+        iteration_slices = converge_interior_fluid(iteration_slices, p_in_interior, T_in_interior, v_in_interior, p_in_exterior)
+        iteration_slices = converge_exterior_fluid(iteration_slices)
         iteration_slices = converge_interior_wall (iteration_slices, alpha_env, T_env)
         iteration_slices = converge_exterior_wall (iteration_slices, alpha_env, T_env)
 
