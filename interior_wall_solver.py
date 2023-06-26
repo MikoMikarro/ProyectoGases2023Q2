@@ -1,7 +1,7 @@
 from utils import geometric_avg
 from copy import deepcopy
 
-def converge_interior_wall(slices, T_in_interior_wall):
+def converge_interior_wall(slices, alpha_env, T_env):
 
     iteration_slices = deepcopy(slices)
     while True:
@@ -9,26 +9,49 @@ def converge_interior_wall(slices, T_in_interior_wall):
         start_slices = deepcopy(iteration_slices)
         iteration_slices = deepcopy(start_slices)
         
-        for slice, i in enumerate(iteration_slices[:-2]):
-            if i!= 0:
-                lambda_w = geometric_avg(iteration_slices[i-1].lambda_interior_wall, slice.lambda_interior_wall, slice.dx/2, slice.dx/2)
-                q_w = (slice.T_interior_wall - iteration_slices[i-1].T_interior_wall) * -lambda_w / slice.dx 
+        for slice, i in enumerate(iteration_slices[:-1]):
 
+            alpha_int = slice.alpha_interior_fluid
+            A_int = slice.lateral_area_interior_fluid
+            T_int = slice.T_interior_fluid
+
+            ad = alpha_int * A_int
+
+            alpha_ext = slice.alpha_exterior_fluid
+            A_ext = slice.latera_area_interior_wall
+            T_ext = slice.T_exterior_fluid
+
+            au = alpha_ext * A_ext
+            
+            east_slice = iteration_slices[i+1]
+
+            if i == 0:
+                aw = 0
             else:
-                lambda_w    = slice.lambda_interior_wall
-                q_w         = (slice.T_interior_wall - T_in_interior_wall) * -lambda_w / (slice.dx/2)
+                west_slice = iteration_slices[i-1]
+                lambda_w = geometric_avg(west_slice.lambda_interior_wall, slice.lambda_interior_wall, west_slice.dx, slice.dx)
+                T_w = west_slice.T_interior_wall
+                A_w = slice.cross_section_interior_wall
+                d_w = slice.dx
 
-            A_w = slice.cross_section_interior_wall
-            lambda_e = geometric_avg(slice.lambda_interior_wall, iteration_slices[i+1].lambda_interior_wall, slice.dx/2, slice.dx/2)
-            A_e = iteration_slices[i+1].cross_section_interior_wall
+                aw = lambda_w * A_w / d_w
 
-            q_up = slice.alpha_exterior_fluid*(slice.T_interior_wall - slice.T_exterior_fluid)
-            A_up = slice.lateral_area_interior_fluid
+                if i ==len(iteration_slices) - 2:
+                    T_e = T_ext
+                    alpha_e = alpha_env
+                    A_e = east_slice.cross_section_interior_wall
+                    ae = alpha_e * T_e
 
-            q_down = slice.alpha_interior_fluid*(slice.T_interior_fluid - slice.T_interior_wall)
-            A_down = slice.lateral_area_interior_wall
+                else:
+                    lambda_e = geometric_avg(east_slice.lambda_interior_wall, slice.lambda_interior_wall, east_slice.dx, slice.dx)
+                    T_e = east_slice.T_interior_wall
+                    A_e = east_slice.cross_section_interior_wall
+                    d_e = slice.dx
+                    ae = lambda_e * A_e / d_e
+            
 
-            iteration_slices[i+1].T_interior_wall = (q_w*A_w - q_up*A_up + q_down*A_down) / (-lambda_e * A_e) + slice.T_interior_wall
+            slice.T_interior_wall = (aw * T_w + ad * T_int + au * T_ext + ae * T_e) / (aw + ad+ ae + au)
+
 
         converged = True
         for new_slice, i in enumerate(iteration_slices):
