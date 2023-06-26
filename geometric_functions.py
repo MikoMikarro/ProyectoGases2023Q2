@@ -3,8 +3,8 @@ import numpy as np
 from scipy.interpolate import CubicSpline
 from CONSTANTS import inner_diameter, length, throat_diameter, outter_diameter, \
     grosor_pared_interior, grosor_fluido_exterior, grosor_pared_exterior, num_elems
-
 from CONSTANTS import convergence_p, convergence_T, convergence_v
+from gas_properties import lambda_copper
 
 class Slice:
     def __init__(self, element_num) -> None:
@@ -35,7 +35,7 @@ class Slice:
         self.T_exterior_wall        = 0
 
     def lateral_area(self, extra_radius = 0):
-        x_vals = [length/self.num_elems * self.element_num, length/self.num_elems * (self.element_num + 1)]
+        x_vals = np.array([length/self.num_elems * self.element_num, length/self.num_elems * (self.element_num + 1)])/100
         r1, r2 = self.spline(x_vals)
         r1 += extra_radius
         r2 += extra_radius
@@ -61,14 +61,14 @@ class Slice:
     
     @property
     def angle(self):
-        x_vals = [length/self.num_elems * self.element_num, length/self.num_elems * (self.element_num + 1)]
+        x_vals = np.array([length/self.num_elems * self.element_num, length/self.num_elems * (self.element_num + 1)])/100
         r1, r2 = self.spline(x_vals)
         dx = length/self.num_elems
 
         return np.arctan2(r2 - r1, dx)
     
     def cross_section(self, extra_radius = 0):
-        x_vals = [length/self.num_elems * self.element_num]
+        x_vals = np.array([length/self.num_elems * self.element_num])/100
         r = self.spline(x_vals) + extra_radius
         return np.pi * r[0]**2
     
@@ -95,14 +95,15 @@ class Slice:
     @property
     def alpha_exterior_fluid(self):
         return 0
-    
+
     @property
     def lambda_interior_fluid(self):
         return 0
     
     @property
     def lambda_interior_wall(self):
-        return 0
+        
+        return lambda_copper(self.T_interior_wall)
     
     @property
     def lambda_exterior_fluid(self):
@@ -110,10 +111,10 @@ class Slice:
     
     @property
     def lambda_exterior_wall(self):
-        return 0
+        return lambda_copper(self.T_exterior_wall)
     
     def radius(self):
-        x_vals = [length/self.num_elems * self.element_num]
+        x_vals = np.array([length/self.num_elems * self.element_num]) / 100
         r = self.spline(x_vals)
         return r[0]
     
@@ -123,15 +124,15 @@ class Slice:
     
     @property
     def radius_interior_wall(self):
-        return self.radius_interior_fluid() + grosor_pared_interior
+        return self.radius_interior_fluid + grosor_pared_interior / 100
     
     @property
     def radius_exterior_fluid(self):
-        return self.radius_interior_wall() + grosor_fluido_exterior
+        return self.radius_interior_wall + grosor_fluido_exterior / 100
     
     @ property
     def radius_exterior_wall(self):
-        return self.radius_exterior_fluid() + grosor_pared_exterior
+        return self.radius_exterior_fluid + grosor_pared_exterior / 100
 
     
     def not_converges(self, other_slice):
