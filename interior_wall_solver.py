@@ -18,7 +18,7 @@ def converge_interior_wall(slices, alpha_env, T_env):
             ad = alpha_int * A_int
 
             alpha_ext = slice.alpha_exterior_fluid
-            A_ext = slice.latera_area_interior_wall
+            A_ext = slice.lateral_area_interior_wall
             T_ext = slice.T_exterior_fluid
 
             au = alpha_ext * A_ext
@@ -26,7 +26,14 @@ def converge_interior_wall(slices, alpha_env, T_env):
             east_slice = iteration_slices[i+1]
 
             if i == 0:
+                T_w = 0
                 aw = 0
+                
+                lambda_e = geometric_avg(east_slice.lambda_interior_wall, slice.lambda_interior_wall, east_slice.dx, slice.dx)
+                T_e = east_slice.T_interior_wall
+                A_e = east_slice.cross_section_interior_wall
+                d_e = slice.dx
+                ae = lambda_e * A_e / d_e
             else:
                 west_slice = iteration_slices[i-1]
                 lambda_w = geometric_avg(west_slice.lambda_interior_wall, slice.lambda_interior_wall, west_slice.dx, slice.dx)

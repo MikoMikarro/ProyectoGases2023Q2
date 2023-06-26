@@ -44,19 +44,19 @@ class Slice:
 
     @property
     def lateral_area_interior_fluid(self):
-        self.lateral_area()
+        return self.lateral_area()
 
     @property
     def lateral_area_interior_wall(self):
-        self.lateral_area(grosor_pared_interior / 100)
+        return self.lateral_area(grosor_pared_interior / 100)
     
     @property
     def lateral_area_exterior_fluid(self):
-        self.lateral_area((grosor_pared_interior + grosor_fluido_exterior)/100)
+        return self.lateral_area((grosor_pared_interior + grosor_fluido_exterior)/100)
 
     @property
     def lateral_area_exterior_wall(self):
-        self.lateral_area((grosor_pared_interior + grosor_fluido_exterior + grosor_pared_exterior \
+        return self.lateral_area((grosor_pared_interior + grosor_fluido_exterior + grosor_pared_exterior \
                            )/100)
     
     @property

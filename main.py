@@ -1,8 +1,8 @@
 from CONSTANTS import num_elems
 from geometric_functions import Slice
 from copy import deepcopy
-from interior_fluid_solver import converge_interior_fluid
-from exterior_fluid_solver import converge_exterior_fluid
+#from interior_fluid_solver import converge_interior_fluid
+#from exterior_fluid_solver import converge_exterior_fluid
 from interior_wall_solver  import converge_interior_wall
 from exterior_wall_solver  import converge_exterior_wall
 # Start conditions
@@ -40,10 +40,10 @@ def main():
         start_slices = deepcopy(iteration_slices)
         iteration_slices = deepcopy(start_slices)
 
-        iteration_slices = converge_interior_fluid(iteration_slices)
-        iteration_slices = converge_exterior_fluid(iteration_slices)
+        #iteration_slices = converge_interior_fluid(iteration_slices)
+        #iteration_slices = converge_exterior_fluid(iteration_slices)
         iteration_slices = converge_interior_wall (iteration_slices, alpha_env, T_env)
-        iteration_slices = converge_exterior_wall (iteration_slices, alpha_env, T_env)
+        #iteration_slices = converge_exterior_wall (iteration_slices, alpha_env, T_env)
 
         converged = True
         for i, new_slice in enumerate(iteration_slices):
