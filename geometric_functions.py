@@ -114,7 +114,7 @@ class Slice:
         return lambda_copper(self.T_exterior_wall)
     
     def radius(self):
-        x_vals = [length/self.num_elems * self.element_num]
+        x_vals = [length/self.num_elems * self.element_num] / 100
         r = self.spline(x_vals)
         return r[0]
     
