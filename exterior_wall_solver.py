@@ -10,7 +10,7 @@ def converge_exterior_wall(slices, T_in_exterior_wall, alpha_env, T_ext):
         iteration_slices = deepcopy(start_slices)
         iteration_slices = iteration_slices[::-1]
         
-        for slice, i in enumerate(iteration_slices[1:-1]):
+        for i, slice in enumerate(iteration_slices[1:-1]):
             if i!= 0:
                 lambda_w = geometric_avg(iteration_slices[i-1].lambda_exterior_wall, slice.lambda_exterior_wall, slice.dx/2, slice.dx/2)
                 q_w = (slice.T_exterior_wall - iteration_slices[i-1].T_exterior_wall) * -lambda_w / slice.dx 

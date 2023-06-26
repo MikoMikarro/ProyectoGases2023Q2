@@ -1,12 +1,11 @@
 import numpy as np
 
-from main import p_in_interior, T_in_interior, v_in_interior, p_in_exterior
 from gas_properties import cp_h2o, lambda_h2o, mu_h2o, cp_avg_h2o
 from copy import deepcopy
 from CONSTANTS import length, epsilon_r,convergence_T
 
 
-def converge_interior_fluid(slices):
+def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior, p_in_exterior):
     # Calculates the interior fluid properties throughout the nozzle
 
     Rg = 8.314 / 0.018015 # J/kgK (R g of water vapor)
@@ -19,14 +18,14 @@ def converge_interior_fluid(slices):
     iteration_slices[0].T_interior_fluid = T_in_interior
     iteration_slices[0].v_interior_fluid = v_in_interior
     iteration_slices[0].rho_interior_fluid = p_in_interior / (T_in_interior * Rg)
-    m_dot = iteration_slices[0].cross_section * iteration_slices[0].rho_interior_fluid * v_in_interior
+    m_dot = iteration_slices[0].cross_section_interior_fluid * iteration_slices[0].rho_interior_fluid * v_in_interior
 
     # Iterate through nodes
-    for slice, i in enumerate(iteration_slices[:-1]):
+    for i, slice in enumerate(iteration_slices[:-1]):
         #Starting conditions
         iteration_slices[i].Tr_interior_fluid    = Tr_start
         iteration_slices[i+1].p_interior_fluid   = iteration_slices[i].p_interior_fluid
-        iteration_slices[i+1].T_interior_fluid   = iteration_slices[i].T_interior_fluid
+        iteration_slices[i+1].T_interior_fluid   = iteration_slices[i].T_interior_fluid + 100 # To avoid div by 0 on first iteration
         iteration_slices[i+1].v_interior_fluid   = iteration_slices[i].v_interior_fluid
         iteration_slices[i+1].rho_interior_fluid = iteration_slices[i].rho_interior_fluid
 
@@ -36,7 +35,7 @@ def converge_interior_fluid(slices):
             Ti   = (iteration_slices[i+1].T_interior_fluid + iteration_slices[i].T_interior_fluid)/2
             vi   = (iteration_slices[i+1].v_interior_fluid + iteration_slices[i].v_interior_fluid)/2
             Pi   = (iteration_slices[i+1].p_interior_fluid + iteration_slices[i].p_interior_fluid)/2
-            Tref = (Ti + slice.T_interior_wall)/2 + 0.22 * (iteration_slices[i].Tr - Ti)
+            Tref = (Ti + slice.T_interior_wall)/2 + 0.22 * (iteration_slices[i].Tr_interior_fluid - Ti)
 
             # Thermpphysical properties
             rhoi    = Pi / (Tref * Rg)
@@ -45,7 +44,7 @@ def converge_interior_fluid(slices):
             mui     = mu_h2o(Tref)
 
             # Other properties
-            Di = 2 * (iteration_slices[i+1].radius + iteration_slices[i].radius)/2
+            Di = iteration_slices[i+1].radius_interior_fluid + iteration_slices[i].radius_interior_fluid
 
             #   Empyrical coefficients
             Re = rhoi * vi *  Di / mui
@@ -77,7 +76,7 @@ def converge_interior_fluid(slices):
 
             # Average Cp heat coefficients
             cpr_avg = cp_avg_h2o(iteration_slices[i].Tr_interior_fluid, slice.T_interior_wall)
-            cpi_avg = cp_avg_h2o(iteration_slices[i].T_interior_fluid + iteration_slices[i+1].T_interior_fluid)
+            cpi_avg = cp_avg_h2o(iteration_slices[i].T_interior_fluid, iteration_slices[i+1].T_interior_fluid)
 
             # Linealized moment equation coefficients for solving the outlet velocity
             Am = m_dot + f * rhoi * vi / 4 * slice.lateral_area_interior_fluid * np.cos(slice.angle)
