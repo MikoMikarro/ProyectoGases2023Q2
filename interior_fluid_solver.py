@@ -53,9 +53,9 @@ def converge_interior_fluid(slices):
             Gz = Re * Pr * Di / length
 
             # Recuperation factor
-            if Re < 2000        # Laminar
+            if Re < 2000:        # Laminar
                 r = Pr**(1/2)
-            elif Re >= 2000     # Turbulent
+            elif Re >= 2000:     # Turbulent
                 r = Pr**(1/3) 
 
             # Nusselt
