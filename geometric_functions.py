@@ -61,14 +61,14 @@ class Slice:
     
     @property
     def angle(self):
-        x_vals = [length/self.num_elems * self.element_num, length/self.num_elems * (self.element_num + 1)]
+        x_vals = np.array([length/self.num_elems * self.element_num, length/self.num_elems * (self.element_num + 1)])/100
         r1, r2 = self.spline(x_vals)
         dx = length/self.num_elems
 
         return np.arctan2(r2 - r1, dx)
     
     def cross_section(self, extra_radius = 0):
-        x_vals = [length/self.num_elems * self.element_num]
+        x_vals = np.array([length/self.num_elems * self.element_num])/100
         r = self.spline(x_vals) + extra_radius
         return np.pi * r[0]**2
     
