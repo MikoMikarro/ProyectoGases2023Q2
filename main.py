@@ -14,10 +14,8 @@ p_in_exterior = 1 * 101325 # Pa
 T_in_exterior = 34 # K
 v_in_exterior = 200 # m/s
 
-T_in_interior_wall = 300 # K
-T_in_exterior_wall = 200 # K
 
-T_ext         = 312 # K
+T_env         = 312 # K
 
 alpha_env     = 32e-5 # 
 
@@ -44,11 +42,11 @@ def main():
 
         iteration_slices = converge_interior_fluid(iteration_slices, p_in_interior, T_in_interior, v_in_interior, p_in_exterior)
         iteration_slices = converge_exterior_fluid(iteration_slices)
-        iteration_slices = converge_interior_wall (iteration_slices, T_in_interior_wall)
-        iteration_slices = converge_exterior_wall (iteration_slices, T_in_exterior_wall, alpha_env, T_ext)
+        iteration_slices = converge_interior_wall (iteration_slices, alpha_env, T_env)
+        iteration_slices = converge_exterior_wall (iteration_slices, alpha_env, T_env)
 
         converged = True
-        for new_slice, i in enumerate(iteration_slices):
+        for i, new_slice in enumerate(iteration_slices):
             old_slice = start_slices[i]
             if old_slice.not_converges(new_slice):
                 converged = False
