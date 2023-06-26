@@ -9,7 +9,7 @@ def converge_interior_wall(slices, T_in_interior_wall):
         start_slices = deepcopy(iteration_slices)
         iteration_slices = deepcopy(start_slices)
         
-        for slice, i in enumerate(iteration_slices[:-2]):
+        for i, slice in enumerate(iteration_slices[:-2]):
             if i!= 0:
                 lambda_w = geometric_avg(iteration_slices[i-1].lambda_interior_wall, slice.lambda_interior_wall, slice.dx/2, slice.dx/2)
                 q_w = (slice.T_interior_wall - iteration_slices[i-1].T_interior_wall) * -lambda_w / slice.dx 
@@ -31,7 +31,7 @@ def converge_interior_wall(slices, T_in_interior_wall):
             iteration_slices[i+1].T_interior_wall = (q_w*A_w - q_up*A_up + q_down*A_down) / (-lambda_e * A_e) + slice.T_interior_wall
 
         converged = True
-        for new_slice, i in enumerate(iteration_slices):
+        for i, new_slice in enumerate(iteration_slices):
             old_slice = start_slices[i]
             if old_slice.not_converges(new_slice):
                 converged = False
