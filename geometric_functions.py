@@ -119,7 +119,7 @@ class Slice:
     
     @property
     def radius_interior_fluid(self):
-        return self.radius
+        return self.radius()
     
     @property
     def radius_interior_wall(self):
