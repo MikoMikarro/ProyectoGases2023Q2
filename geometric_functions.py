@@ -124,15 +124,15 @@ class Slice:
     
     @property
     def radius_interior_wall(self):
-        return self.radius_interior_fluid + grosor_pared_interior
+        return self.radius_interior_fluid + grosor_pared_interior / 100
     
     @property
     def radius_exterior_fluid(self):
-        return self.radius_interior_wall + grosor_fluido_exterior
+        return self.radius_interior_wall + grosor_fluido_exterior / 100
     
     @ property
     def radius_exterior_wall(self):
-        return self.radius_exterior_fluid + grosor_pared_exterior
+        return self.radius_exterior_fluid + grosor_pared_exterior / 100
 
     
     def not_converges(self, other_slice):
