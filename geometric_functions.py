@@ -3,8 +3,8 @@ import numpy as np
 from scipy.interpolate import CubicSpline
 from CONSTANTS import inner_diameter, length, throat_diameter, outter_diameter, \
     grosor_pared_interior, grosor_fluido_exterior, grosor_pared_exterior, num_elems
-
 from CONSTANTS import convergence_p, convergence_T, convergence_v
+from gas_properties import lambda_copper
 
 class Slice:
     def __init__(self, element_num) -> None:
@@ -95,14 +95,15 @@ class Slice:
     @property
     def alpha_exterior_fluid(self):
         return 0
-    
+
     @property
     def lambda_interior_fluid(self):
         return 0
     
     @property
     def lambda_interior_wall(self):
-        return 1
+        
+        return lambda_copper(self.T_interior_wall)
     
     @property
     def lambda_exterior_fluid(self):
@@ -110,7 +111,7 @@ class Slice:
     
     @property
     def lambda_exterior_wall(self):
-        return 1
+        return lambda_copper(self.T_exterior_wall)
     
     def radius(self):
         x_vals = [length/self.num_elems * self.element_num]
