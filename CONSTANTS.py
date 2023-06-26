@@ -8,6 +8,8 @@ grosor_pared_interior = 5.0 # cm
 grosor_fluido_exterior = 5.0 # cm
 grosor_pared_exterior = 5.0 # cm
 
+epsilon_r = 0.0001 # rugosidad relativa adimensional
+
 # Numeric
 num_elems = 10 #
 convergence_T = 0.005
