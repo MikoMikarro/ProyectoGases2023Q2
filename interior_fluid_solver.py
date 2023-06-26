@@ -60,11 +60,13 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
             # Nusselt
             if  Re < 2000 and Gz > 10:
                 nu_c = [1.86, 1/3, 1/3, (Di/length)**(1/3) * (mui / mu_h2o(slice.T_interior_wall))**0.14]
+            
             elif  Re < 2000 and Gz < 10:
                 nu_c = [3.66, 0, 0, 1]
             else:
                 nu_c = [3.66, 0, 0, 1]
             Nu = nu_c[0] * Re**nu_c[1] * Pr**nu_c[2] * nu_c[3]
+            print(iteration_slices[i].radius_interior_fluid)
 
             # Convective heat transfer coefficient
             alpha = Nu * lambdai / Di
@@ -179,6 +181,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
 
                 # Check convergence
                 if abs(iteration_slices[i+1].Tr_interior_fluid - iteration_slices[i].Tr_interior_fluid) < convergence_T:
+                    print(vout)
                     break
     
     return iteration_slices
