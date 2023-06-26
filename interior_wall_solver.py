@@ -1,8 +1,7 @@
 from utils import geometric_avg
 from copy import deepcopy
-from main import T_in_interior_wall
 
-def converge_interior_wall(slices):
+def converge_interior_wall(slices, T_in_interior_wall):
 
     iteration_slices = deepcopy(slices)
     while True:
