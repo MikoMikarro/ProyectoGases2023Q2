@@ -9,7 +9,7 @@ def converge_interior_wall(slices, alpha_env, T_env):
         start_slices = deepcopy(iteration_slices)
         iteration_slices = deepcopy(start_slices)
         
-        for slice, i in enumerate(iteration_slices[:-1]):
+        for i, slice in enumerate(iteration_slices[:-1]):
 
             alpha_int = slice.alpha_interior_fluid
             A_int = slice.lateral_area_interior_fluid
@@ -54,7 +54,7 @@ def converge_interior_wall(slices, alpha_env, T_env):
 
 
         converged = True
-        for new_slice, i in enumerate(iteration_slices):
+        for i, new_slice in enumerate(iteration_slices):
             old_slice = start_slices[i]
             if old_slice.not_converges(new_slice):
                 converged = False

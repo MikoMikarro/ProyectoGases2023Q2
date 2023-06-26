@@ -46,7 +46,7 @@ def main():
         iteration_slices = converge_exterior_wall (iteration_slices, alpha_env, T_env)
 
         converged = True
-        for new_slice, i in enumerate(iteration_slices):
+        for i, new_slice in enumerate(iteration_slices):
             old_slice = start_slices[i]
             if old_slice.not_converges(new_slice):
                 converged = False
