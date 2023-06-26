@@ -17,6 +17,7 @@ class Slice:
 
         self.spline = CubicSpline(x1/100, y1/100)
         self.dx = length/num_elems
+        self.x = self.element_num * length/self.num_elems
 
         self.p_interior_fluid       = 0
         self.T_interior_fluid       = 0
@@ -69,7 +70,7 @@ class Slice:
     def cross_section(self, extra_radius = 0):
         x_vals = [length/self.num_elems * self.element_num]
         r = self.spline(x_vals) + extra_radius
-        return np.pi * r**2
+        return np.pi * r[0]**2
     
     @property
     def cross_section_interior_fluid(self):
@@ -110,6 +111,28 @@ class Slice:
     @property
     def lambda_exterior_wall(self):
         return 0
+    
+    def radius(self):
+        x_vals = [length/self.num_elems * self.element_num]
+        r = self.spline(x_vals)
+        return r[0]
+    
+    @property
+    def radius_interior_fluid(self):
+        return self.radius
+    
+    @property
+    def radius_interior_wall(self):
+        return self.radius_interior_fluid + grosor_pared_interior
+    
+    @property
+    def radius_exterior_fluid(self):
+        return self.radius_interior_wall + grosor_fluido_exterior
+    
+    @ property
+    def radius_exterior_wall(self):
+        return self.radius_exterior_fluid + grosor_pared_exterior
+
     
     def not_converges(self, other_slice):
         return (abs(self.p_exterior_fluid - other_slice.p_exterior_fluid) > convergence_p) or \
