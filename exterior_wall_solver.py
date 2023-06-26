@@ -1,8 +1,7 @@
 from utils import geometric_avg
 from copy import deepcopy
-from main import T_in_exterior_wall, alpha_env, T_ext
 
-def converge_exterior_wall(slices):
+def converge_exterior_wall(slices, T_in_exterior_wall, alpha_env, T_ext):
 
     iteration_slices = deepcopy(slices)
     while True:
