@@ -6,11 +6,11 @@ from exterior_fluid_solver import converge_exterior_fluid
 from interior_wall_solver  import converge_interior_wall
 from exterior_wall_solver  import converge_exterior_wall
 # Start conditions
-p_in_interior = 30 # atm
+p_in_interior = 30 * 101325 # Pa
 T_in_interior = 3600 # K
 v_in_interior = 120 # m/s
 
-p_in_exterior = 1 # atm
+p_in_exterior = 1 * 101325 # Pa
 T_in_exterior = 34 # K
 v_in_exterior = 200 # m/s
 
@@ -18,7 +18,6 @@ T_in_interior_wall = 300 # K
 T_in_exterior_wall = 200 # K
 
 T_ext         = 312 # K
-p_ext         = 1 # atm
 
 alpha_env     = 32e-5 # 
 
