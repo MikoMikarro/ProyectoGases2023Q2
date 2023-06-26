@@ -86,7 +86,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
             # Linealized energy equation coefficients for solving the outlet velocity
             Ae = m_dot * cpi_avg + alpha / 2 * slice.lateral_area_interior_fluid
             Be = m_dot/2 + alpha * r / (4 * cpr_avg) * slice.lateral_area_interior_fluid
-            Ce = slice.T_interior_fluid * (m_dot * cpi_avg - alpha/2 * slice.lateral_area_interior_fluid) + slice.v_interior_fluid**2 * (m_dot - alpha * r / (4 * cpr_avg) * slice.lateral_area_interior_fluid) + slice * slice.T_interior_wall * alpha * slice.lateral_area_interior_fluid
+            Ce = slice.T_interior_fluid * (m_dot * cpi_avg - alpha/2 * slice.lateral_area_interior_fluid) + slice.v_interior_fluid**2 * (m_dot - alpha * r / (4 * cpr_avg) * slice.lateral_area_interior_fluid) + slice.T_interior_wall * alpha * slice.lateral_area_interior_fluid
             
             # Linealized overall coefficients for solving the outlet velocity
             A = Am * Ae * iteration_slices[i+1].cross_section_interior_fluid - Rg * m_dot * Bm * Be
