@@ -43,7 +43,7 @@ def main():
         #iteration_slices = converge_interior_fluid(iteration_slices, p_in_interior, T_in_interior, v_in_interior, p_in_exterior)
         #iteration_slices = converge_exterior_fluid(iteration_slices)
         iteration_slices = converge_interior_wall (iteration_slices, alpha_env, T_env)
-        #iteration_slices = converge_exterior_wall (iteration_slices, alpha_env, T_env)
+        iteration_slices = converge_exterior_wall (iteration_slices, alpha_env, T_env)
 
         converged = True
         for i, new_slice in enumerate(iteration_slices):

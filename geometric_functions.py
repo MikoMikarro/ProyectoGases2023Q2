@@ -102,7 +102,7 @@ class Slice:
     
     @property
     def lambda_interior_wall(self):
-        return 0
+        return 1
     
     @property
     def lambda_exterior_fluid(self):
@@ -110,7 +110,7 @@ class Slice:
     
     @property
     def lambda_exterior_wall(self):
-        return 0
+        return 1
     
     def radius(self):
         x_vals = [length/self.num_elems * self.element_num]
