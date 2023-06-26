@@ -20,10 +20,11 @@ class Slice:
 
         self.p_interior_fluid       = 0
         self.T_interior_fluid       = 0
+        self.Tr_interior_fluid      = 0
         self.rho_interior_fluid     = 0
         self.v_interior_fluid       = 0
 
-        self.T_interior_wall        = 0
+        self.T_interior_wall        = 1000
 
         self.p_exterior_fluid       = 0
         self.T_exterior_fluid       = 0
