@@ -33,7 +33,8 @@ def main():
         i.v_exterior_fluid = v_in_exterior
 
         i.T_interior_wall = T_in_interior
-        i.T_exterior_wall = T_in_exterior
+        i.T_exterior_wall = T_env
+
     iteration_slices = deepcopy(all_slices)
     while True:
         
@@ -55,9 +56,7 @@ def main():
         if converged:
             break
 
-
-
-    pass
+    
 
 if __name__ == '__main__':
     main()
