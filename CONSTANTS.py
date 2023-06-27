@@ -11,7 +11,7 @@ grosor_pared_exterior = 5.0 # cm
 epsilon_r = 0.01 # rugosidad relativa adimensional
 
 # Numeric
-num_elems = 100 #
+num_elems = 20 #
 convergence_T = 0.01
 convergence_p = 0.01
 convergence_v = 0.01

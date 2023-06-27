@@ -24,7 +24,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
     m_dot = iteration_slices[0].cross_section_interior_fluid * iteration_slices[0].rho_interior_fluid * v_in_interior
     iteration_slices[0].M_interior_fluid = v_in_interior / np.sqrt(Rg * gamma * T_in_interior)
     print("Mass flow: ", m_dot)
-    
+
     # Iterate through nodes
     for i, slice in enumerate(iteration_slices[:-1]):
         #Starting conditions
@@ -74,7 +74,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
 
             # Convective heat transfer coefficient
             alpha = Nu * lambdai / Di
-            # iteration_slices[i].alpha_interior_fluid = alpha
+            iteration_slices[i].alpha_interior_fluid = alpha
 
             # Friction factor (Churchill expression)
             fA = (2.475 * np.log(1 / ((7 / Re)**0.9 + 0.27*epsilon_r)))**16
