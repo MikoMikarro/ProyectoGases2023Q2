@@ -66,7 +66,8 @@ def main():
 
     data = {"T_interior_fluid": [float(i.T_interior_fluid) for i in all_slices],
             "x_position"      : [float(i.x               ) for i in all_slices],
-            "radius_interior_fluid": [i.radius_interior_fluid for i in all_slices]}
+            "radius_interior_fluid": [i.radius_interior_fluid for i in all_slices],
+            "rho_interior_fluid": [float(i.rho_interior_fluid) for i in all_slices],}
 
     with open('data.yml', 'w') as outfile:
         yaml.dump(data, outfile, default_flow_style=False)
