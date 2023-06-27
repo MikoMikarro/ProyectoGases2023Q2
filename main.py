@@ -60,6 +60,8 @@ def main():
         
         if converged:
             break
+    
+    all_slices = deepcopy(iteration_slices)
 
     # plot all temperatures
     plt.figure()
