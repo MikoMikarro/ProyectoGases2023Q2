@@ -9,12 +9,12 @@ from exterior_wall_solver  import converge_exterior_wall
 import matplotlib.pyplot as plt
 
 # Start conditions
-p_in_interior = 300 * 101325 # Pa
-T_in_interior = 3300 # K
-v_in_interior = 60 # m/s
+p_in_interior = 100 * 101325 # Pa
+T_in_interior = 2300 # K
+v_in_interior = 120 # m/s
 
 p_in_exterior = 1 * 101325 # Pa
-T_in_exterior = 34 # K
+T_in_exterior = 250 # K
 v_in_exterior = 20 # m/s
 
 T_env         = 1000 # K
