@@ -10,6 +10,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
     # Calculates the interior fluid properties throughout the nozzle
 
     Rg = 8.314 / 0.018015 # J/kgK (R g of water vapor)
+    gamma = 1.25
     Tr_start = 4000
 
     iteration_slices = deepcopy(slices)
@@ -20,6 +21,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
     iteration_slices[0].v_interior_fluid = v_in_interior
     iteration_slices[0].rho_interior_fluid = p_in_interior / (T_in_interior * Rg)
     m_dot = iteration_slices[0].cross_section_interior_fluid * iteration_slices[0].rho_interior_fluid * v_in_interior
+    iteration_slices[0].M_interior_fluid = v_in_interior / np.sqrt(Rg * gamma * T_in_interior)
     print("Mass flow: ", m_dot)
     # Iterate through nodes
     for i, slice in enumerate(iteration_slices[:-1]):
@@ -234,7 +236,8 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
                 iteration_slices[i+1].T_interior_fluid   = Tout
                 iteration_slices[i+1].v_interior_fluid   = vout
                 iteration_slices[i+1].rho_interior_fluid = m_dot / (vout * iteration_slices[i+1].cross_section_interior_fluid)
-
+                iteration_slices[i+1].M_interior_fluid = vout / np.sqrt(Rg * gamma * Tout)
+                
                 # Print final results
                 if False:
                     print("Tr at exit: ", iteration_slices[i].Tr_interior_fluid)
@@ -244,15 +247,15 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
                     print("Rho at exit: ", iteration_slices[i+1].rho_interior_fluid)
                     print(" ")
 
-                # Check convergence
+                # Convergence print
                 if False:
                     print("Last Tr: ", (iteration_slices[i].Tr_interior_fluid))             
                     print("Delta Tr estimated: ", conv_value)
                     print(" ")
                     time.sleep(1)
-                if conv_value < convergence_T:
-                    print("T at exit: ", iteration_slices[i+1].T_interior_fluid)
 
+                # Check convergence
+                if conv_value < convergence_T:
                     break
     
     return iteration_slices

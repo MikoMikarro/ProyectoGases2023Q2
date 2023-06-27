@@ -9,9 +9,9 @@ from exterior_wall_solver  import converge_exterior_wall
 import matplotlib.pyplot as plt
 
 # Start conditions
-p_in_interior = 100 * 101325 # Pa
-T_in_interior = 2300 # K
-v_in_interior = 120 # m/s
+p_in_interior = 200 * 101325 # Pa
+T_in_interior = 600 # K
+v_in_interior = 100 # m/s
 
 p_in_exterior = 1 * 101325 # Pa
 T_in_exterior = 250 # K
@@ -92,6 +92,16 @@ def main():
     plt.ylabel('v [m/s]')
     plt.grid()
     plt.plot([i.x for i in all_slices], [i.v_interior_fluid for i in all_slices], label='v interior fluid')
+    #plt.plot([i.x for i in all_slices], [i.v_exterior_fluid for i in all_slices], label='v exterior fluid')
+    plt.legend()
+
+    # plot all velocities
+    plt.figure()
+    plt.title('Mach')
+    plt.xlabel('x [m]')
+    plt.ylabel('M')
+    plt.grid()
+    plt.plot([i.x for i in all_slices], [i.M_interior_fluid for i in all_slices], label='M interior fluid')
     #plt.plot([i.x for i in all_slices], [i.v_exterior_fluid for i in all_slices], label='v exterior fluid')
     plt.legend()
 
