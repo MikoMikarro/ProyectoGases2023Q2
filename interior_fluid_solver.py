@@ -21,10 +21,10 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
     iteration_slices[0].T_interior_fluid = T_in_interior
     iteration_slices[0].v_interior_fluid = v_in_interior
     iteration_slices[0].rho_interior_fluid = p_in_interior / (T_in_interior * Rg)
-
     m_dot = iteration_slices[0].cross_section_interior_fluid * iteration_slices[0].rho_interior_fluid * v_in_interior
     iteration_slices[0].M_interior_fluid = v_in_interior / np.sqrt(Rg * gamma * T_in_interior)
     print("Mass flow: ", m_dot)
+    
     # Iterate through nodes
     for i, slice in enumerate(iteration_slices[:-1]):
         #Starting conditions
