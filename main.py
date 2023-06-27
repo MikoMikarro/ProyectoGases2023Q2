@@ -95,7 +95,19 @@ def main():
     #plt.plot([i.x for i in all_slices], [i.v_exterior_fluid for i in all_slices], label='v exterior fluid')
     plt.legend()
 
+    # plot shape of the nozzle
+    plt.figure()
+    plt.title('Nozzle shape')
+    plt.xlabel('x [m]')
+    plt.ylabel('y [m]')
+    plt.grid()
+    plt.plot([i.x for i in all_slices], [i.radius_interior_fluid for i in all_slices])
+    plt.plot([i.x for i in all_slices], [-i.radius_interior_fluid for i in all_slices])
+    plt.legend()
+
     plt.show()
+
+
 
 
 if __name__ == '__main__':
