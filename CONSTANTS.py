@@ -12,7 +12,7 @@ epsilon_r = 0.01 # rugosidad relativa adimensional
 
 # Numeric
 num_elems = 500 #
-convergence_T = 0.0001
-convergence_p = 0.0001
-convergence_v = 0.0001
+convergence_T = 0.01
+convergence_p = 0.01
+convergence_v = 0.01
 

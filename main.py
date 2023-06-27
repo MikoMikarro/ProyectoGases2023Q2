@@ -17,7 +17,7 @@ p_in_exterior = 1 * 101325 # Pa
 T_in_exterior = 250 # K
 v_in_exterior = 20 # m/s
 
-T_env         = 1000 # K
+T_env         = 500 # K
 
 alpha_env     = 32e-5 # 
 
@@ -34,7 +34,7 @@ def main():
         i.T_exterior_fluid = T_in_exterior
         i.v_exterior_fluid = v_in_exterior
 
-        i.T_interior_wall = T_env
+        i.T_interior_wall = T_env*2
         i.T_exterior_wall = T_env
 
     iteration_slices = deepcopy(all_slices)
@@ -47,7 +47,7 @@ def main():
         iteration_slices = converge_interior_fluid(iteration_slices, p_in_interior, T_in_interior, v_in_interior, p_in_exterior)   
         iteration_slices = converge_exterior_fluid(iteration_slices)
         iteration_slices = converge_interior_wall (iteration_slices, alpha_env, T_env)
-        iteration_slices = converge_exterior_wall (iteration_slices, alpha_env, T_env)
+        #iteration_slices = converge_exterior_wall (iteration_slices, alpha_env, T_env)
 
         print(iteration)
         iteration += 1
@@ -61,7 +61,7 @@ def main():
         if converged:
             break
     
-    all_slices = deepcopy(iteration_slices)
+    all_slices = deepcopy(iteration_slices[:-1])
 
     # plot all temperatures
     plt.figure()
