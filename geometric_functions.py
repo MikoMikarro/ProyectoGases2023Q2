@@ -35,6 +35,12 @@ class Slice:
 
         self.T_exterior_wall        = 0
 
+        self.alpha_exterior_fluid = 4500
+        self.alpha_interior_fluid = 4500
+
+        self.lambda_exterior_fluid = 0
+        self.lambda_interior_fluid = 0
+
     def lateral_area(self, extra_radius = 0):
         x_vals = np.array([length/self.num_elems * self.element_num, length/self.num_elems * (self.element_num + 1)])/100
         r1, r2 = self.spline(x_vals)
@@ -89,26 +95,11 @@ class Slice:
         return self.cross_section((grosor_pared_interior + grosor_fluido_exterior + grosor_pared_exterior \
             )/100) - self.cross_section_exterior_fluid - self.cross_section_interior_wall - self.cross_section_interior_fluid
 
-    @property
-    def alpha_interior_fluid(self):
-        return 0
-    
-    @property
-    def alpha_exterior_fluid(self):
-        return 0
-
-    @property
-    def lambda_interior_fluid(self):
-        return 0
     
     @property
     def lambda_interior_wall(self):
         
         return lambda_copper(self.T_interior_wall)
-    
-    @property
-    def lambda_exterior_fluid(self):
-        return 0
     
     @property
     def lambda_exterior_wall(self):
@@ -121,7 +112,7 @@ class Slice:
     
     @property
     def radius_interior_fluid(self):
-        return self.radius()
+        return float(self.radius())
     
     @property
     def radius_interior_wall(self):

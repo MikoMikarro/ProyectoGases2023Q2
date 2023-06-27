@@ -5,9 +5,8 @@ from interior_fluid_solver import converge_interior_fluid
 from exterior_fluid_solver import converge_exterior_fluid
 from interior_wall_solver  import converge_interior_wall
 from exterior_wall_solver  import converge_exterior_wall
-
-import matplotlib.pyplot as plt
-
+from utils import do_all_plots
+import yaml
 # Start conditions
 p_in_interior = 200 * 101325 # Pa
 T_in_interior = 1600 # K
@@ -17,9 +16,9 @@ p_in_exterior = 1 * 101325 # Pa
 T_in_exterior = 250 # K
 v_in_exterior = 20 # m/s
 
-T_env         = 800 # K
+T_env         = 500 # K
 
-alpha_env     = 32e-5 # 
+alpha_env     = 1200 # 
 
 def main():
     all_slices = [Slice(i) for i in range(num_elems + 1)]
@@ -47,7 +46,7 @@ def main():
         iteration_slices = converge_interior_fluid(iteration_slices, p_in_interior, T_in_interior, v_in_interior, p_in_exterior)   
         iteration_slices = converge_exterior_fluid(iteration_slices)
         iteration_slices = converge_interior_wall (iteration_slices, alpha_env, T_env)
-        iteration_slices = converge_exterior_wall (iteration_slices, alpha_env, T_env)
+        #iteration_slices = converge_exterior_wall (iteration_slices, alpha_env, T_env)
 
         print(iteration)
         iteration += 1
@@ -61,63 +60,18 @@ def main():
         if converged:
             break
     
-    all_slices = deepcopy(iteration_slices)
+    all_slices = deepcopy(iteration_slices[:-1])
 
-    # plot all temperatures
-    plt.figure()
-    plt.title('Temperature')
-    plt.xlabel('x [m]')
-    plt.ylabel('T [K]')
-    plt.grid()
-    plt.plot([i.x for i in all_slices], [i.T_interior_fluid for i in all_slices], label='T interior fluid')
-    #plt.plot([i.x for i in all_slices], [i.T_exterior_fluid for i in all_slices], label='T exterior fluid')
-    plt.plot([i.x for i in all_slices], [i.T_interior_wall for i in all_slices], label='T interior wall')
-    plt.plot([i.x for i in all_slices], [i.T_exterior_wall for i in all_slices], label='T exterior wall')
-    plt.legend()
+    ## Export all data
 
-    # plot all pressures
-    plt.figure()
-    plt.title('Pressure')
-    plt.xlabel('x [m]')
-    plt.ylabel('p [Pa]')
-    plt.grid()
-    plt.plot([i.x for i in all_slices], [i.p_interior_fluid for i in all_slices], label='p interior fluid')
-    #plt.plot([i.x for i in all_slices], [i.p_exterior_fluid for i in all_slices], label='p exterior fluid')
-    plt.legend()
+    data = {"T_interior_fluid": [float(i.T_interior_fluid) for i in all_slices],
+            "x_position"      : [float(i.x               ) for i in all_slices],
+            "radius_interior_fluid": [i.radius_interior_fluid for i in all_slices]}
 
-    # plot all velocities
-    plt.figure()
-    plt.title('Velocity')
-    plt.xlabel('x [m]')
-    plt.ylabel('v [m/s]')
-    plt.grid()
-    plt.plot([i.x for i in all_slices], [i.v_interior_fluid for i in all_slices], label='v interior fluid')
-    #plt.plot([i.x for i in all_slices], [i.v_exterior_fluid for i in all_slices], label='v exterior fluid')
-    plt.legend()
+    with open('data.yml', 'w') as outfile:
+        yaml.dump(data, outfile, default_flow_style=False)
 
-    # plot all velocities
-    plt.figure()
-    plt.title('Mach')
-    plt.xlabel('x [m]')
-    plt.ylabel('M')
-    plt.grid()
-    plt.plot([i.x for i in all_slices], [i.M_interior_fluid for i in all_slices], label='M interior fluid')
-    #plt.plot([i.x for i in all_slices], [i.v_exterior_fluid for i in all_slices], label='v exterior fluid')
-    plt.legend()
-
-    # plot shape of the nozzle
-    plt.figure()
-    plt.title('Nozzle shape')
-    plt.xlabel('x [m]')
-    plt.ylabel('y [m]')
-    plt.grid()
-    plt.plot([i.x for i in all_slices], [i.radius_interior_fluid for i in all_slices])
-    plt.plot([i.x for i in all_slices], [-i.radius_interior_fluid for i in all_slices])
-    plt.legend()
-
-    plt.show()
-
-
+    do_all_plots(all_slices)
 
 
 if __name__ == '__main__':
