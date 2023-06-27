@@ -20,7 +20,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
     iteration_slices[0].v_interior_fluid = v_in_interior
     iteration_slices[0].rho_interior_fluid = p_in_interior / (T_in_interior * Rg)
     m_dot = iteration_slices[0].cross_section_interior_fluid * iteration_slices[0].rho_interior_fluid * v_in_interior
-
+    print("Mass flow: ", m_dot)
     # Iterate through nodes
     for i, slice in enumerate(iteration_slices[:-1]):
         #Starting conditions
@@ -29,7 +29,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
         iteration_slices[i+1].T_interior_fluid   = iteration_slices[i].T_interior_fluid + 100 # To avoid div by 0 on first iteration
         iteration_slices[i+1].v_interior_fluid   = iteration_slices[i].v_interior_fluid
         iteration_slices[i+1].rho_interior_fluid = iteration_slices[i].rho_interior_fluid
-
+        
         #Iterate until convergence
         while True:
             # Estimated reference values
@@ -80,6 +80,34 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
             cpr_avg = cp_avg_h2o(iteration_slices[i].Tr_interior_fluid, slice.T_interior_wall)
             cpi_avg = cp_avg_h2o(iteration_slices[i].T_interior_fluid, iteration_slices[i+1].T_interior_fluid)
 
+            # Readout of important values
+            if False:
+                print("Reynold's: " , str(Re))
+                print("Prandtl: " , Pr)
+                print("Graetz: " , Gz)
+                print("Nusselt: " , Nu)
+                print("Alpha: " , alpha)
+                print("Friction factor: " , f)
+                print("Mass flow: " , m_dot)
+                print("Tref: " , Tref)
+                print("Rho i: " , rhoi)
+                print("Lambda i: " , lambdai)
+                print("Cp i: " , cpi)
+                print("Mu i: " , mui)
+                print("D i: " , Di)
+                print("vi: " + str(vi))
+                print("Slat: " + str(slice.lateral_area_interior_fluid))
+                print("Ang i: " + str(slice.angle))
+                print("Cos i: " + str(np.cos(slice.angle)))
+                print("P in: " + str(slice.p_interior_fluid))
+                print("P in iter: " + str(iteration_slices[i].p_interior_fluid))
+                print("V in: " + str(iteration_slices[i].v_interior_fluid))
+                print("Cpi avg: " + str(cpi_avg))
+                print("Cpr avg: " + str(cpr_avg))
+                print("Cross section i: " + str(slice.cross_section_interior_fluid))
+                print("Cross section i+1: " + str(iteration_slices[i+1].cross_section_interior_fluid))
+                print(" ")
+
             # Linealized moment equation coefficients for solving the outlet velocity
             Am = m_dot + f * rhoi * vi / 4 * slice.lateral_area_interior_fluid * np.cos(slice.angle)
             Bm = (iteration_slices[i+1].cross_section_interior_fluid + iteration_slices[i].cross_section_interior_fluid)/2
@@ -95,6 +123,12 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
             B = - Cm * Ae * iteration_slices[i+1].cross_section_interior_fluid
             C = Bm * Ce * Rg * m_dot
 
+            if False:
+                print("A: ", str(A))
+                print("B: ", str(B))
+                print("C: ", str(C))
+                print(" ")
+
             # If negative discriminant return nonsense value
             if B**2 - 4 * A * C < 0:
                 print("error: negative discriminant in high mach flow")
@@ -109,9 +143,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
                 # Calculation of possible velocity values
                 vout_p = (- B + np.sqrt(B**2 - 4 * A * C)) / (2 * A) # Valor sqrt de discriminante positivo
                 vout_n = (- B - np.sqrt(B**2 - 4 * A * C)) / (2 * A) # Valor sqrt de discriminante negativo
-                print(vout_p)
-                print(vout_n)
-                
+                                
                 # Calculation of possible pressure values
                 pout_p = (Cm - vout_p * Am) / Bm
                 pout_n = (Cm - vout_n * Am) / Bm
@@ -121,8 +153,25 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
                 Tout_n = (Ce - vout_n**2 * Be) / Ae
 
                 # Generated entropy for each case
-                Sgen_p = cpi_avg * np.log(Tout_p / iteration_slices[i].T_interior_fluid) - Rg * (pout_p / iteration_slices[i].p_interior_fluid)
-                Sgen_n = cpi_avg * np.log(Tout_n / iteration_slices[i].T_interior_fluid) - Rg * (pout_n / iteration_slices[i].p_interior_fluid)
+                if ((Tout_p / iteration_slices[i].T_interior_fluid) and (pout_p / iteration_slices[i].p_interior_fluid)) > 0:
+                    Sgen_p = cpi_avg * np.log(Tout_p / iteration_slices[i].T_interior_fluid) - Rg * np.log(pout_p / iteration_slices[i].p_interior_fluid)
+                else:
+                    Sgen_p = -1
+                if ((Tout_n / iteration_slices[i].T_interior_fluid) and (pout_n / iteration_slices[i].p_interior_fluid)) > 0:
+                    Sgen_n = cpi_avg * np.log(Tout_n / iteration_slices[i].T_interior_fluid) - Rg * np.log(pout_n / iteration_slices[i].p_interior_fluid)
+                else:
+                    Sgen_n = -1
+                
+                if False:
+                    print("Velocity out p: ", vout_p)
+                    print("Velocity out n: ", vout_n)
+                    print("Pressure out p: ", pout_p)
+                    print("Pressure out n: ", pout_n)
+                    print("Temperature out p: ", Tout_p)
+                    print("Temperature out n: ", Tout_n)
+                    print("Sgen out p: ", Sgen_p)
+                    print("Sgen out n: ", Sgen_n)
+                    print(" ")
 
                 # Supersonic case (Summerfield criterion is applied to determine if and where the shockwave occurs)
                 if Sgen_p >= 0 and Sgen_n >= 0:
@@ -179,20 +228,31 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
                 # Calculate recovery temperature and assign properties to the exit node
                 Ti = (iteration_slices[i].T_interior_fluid + Tout)/2
                 vi = (iteration_slices[i].v_interior_fluid + vout)/2
-                iteration_slices[i+1].Tr_interior_fluid  = Ti + vi**2 / (2 * cpr_avg)
+                conv_value = abs(iteration_slices[i].Tr_interior_fluid - (Ti + vi**2 / (2 * cpr_avg)))
+                iteration_slices[i].Tr_interior_fluid  = Ti + vi**2 / (2 * cpr_avg)
                 iteration_slices[i+1].p_interior_fluid   = pout
                 iteration_slices[i+1].T_interior_fluid   = Tout
                 iteration_slices[i+1].v_interior_fluid   = vout
                 iteration_slices[i+1].rho_interior_fluid = m_dot / (vout * iteration_slices[i+1].cross_section_interior_fluid)
 
+                # Print final results
+                if False:
+                    print("Tr at exit: ", iteration_slices[i].Tr_interior_fluid)
+                    print("P at exit: ", iteration_slices[i+1].p_interior_fluid)
+                    print("T at exit: ", iteration_slices[i+1].T_interior_fluid)
+                    print("V at exit: ", iteration_slices[i+1].v_interior_fluid)
+                    print("Rho at exit: ", iteration_slices[i+1].rho_interior_fluid)
+                    print(" ")
+
                 # Check convergence
-                print(vout)
-                print(Tout)
-                print(pout)
-                time.sleep(1)
-                # print(abs(iteration_slices[i+1].Tr_interior_fluid - iteration_slices[i].Tr_interior_fluid))
-                if abs(iteration_slices[i+1].Tr_interior_fluid - iteration_slices[i].Tr_interior_fluid) < convergence_T:
-                    print(suuu)
+                if False:
+                    print("Last Tr: ", (iteration_slices[i].Tr_interior_fluid))             
+                    print("Delta Tr estimated: ", conv_value)
+                    print(" ")
+                    time.sleep(1)
+                if conv_value < convergence_T:
+                    print("V at exit: ", iteration_slices[i+1].v_interior_fluid)
+
                     break
     
     return iteration_slices
