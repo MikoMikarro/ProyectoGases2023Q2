@@ -10,14 +10,14 @@ import matplotlib.pyplot as plt
 
 # Start conditions
 p_in_interior = 200 * 101325 # Pa
-T_in_interior = 600 # K
+T_in_interior = 1600 # K
 v_in_interior = 100 # m/s
 
 p_in_exterior = 1 * 101325 # Pa
 T_in_exterior = 250 # K
 v_in_exterior = 20 # m/s
 
-T_env         = 1000 # K
+T_env         = 800 # K
 
 alpha_env     = 32e-5 # 
 

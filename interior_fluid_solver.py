@@ -12,6 +12,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
     Rg = 8.314 / 0.018015 # J/kgK (R g of water vapor)
     gamma = 1.25
     Tr_start = 4000
+    shock_wave = False
 
     iteration_slices = deepcopy(slices)
 
@@ -72,6 +73,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
 
             # Convective heat transfer coefficient
             alpha = Nu * lambdai / Di
+            # iteration_slices[i].alpha_interior_fluid = alpha
 
             # Friction factor (Churchill expression)
             fA = (2.475 * np.log(1 / ((7 / Re)**0.9 + 0.27*epsilon_r)))**16
@@ -195,13 +197,14 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
                         T_cont = Tout_p
                     
                     # Case where shockwave occurs inside nozzle
-                    if p_cont < 0.4 * p_in_exterior and i < len(iteration_slices) - 1:
+                    if p_cont < 0.4 * p_in_exterior and i < len(iteration_slices) - 1 and shock_wave == False:
                         pout = p_shock
                         vout = v_shock
                         Tout = T_shock
+                        shock_wave = True
 
                     # Case where shockwave occurs outside the nozzle                    
-                    elif p_cont < p_in_exterior and i == len(iteration_slices) - 1:
+                    elif p_cont < p_in_exterior and i == len(iteration_slices) - 1 and shock_wave == False:
                         pout = p_shock
                         vout = v_shock
                         Tout = T_shock

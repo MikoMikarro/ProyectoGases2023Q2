@@ -1,8 +1,8 @@
 # Define constants
 length = 150.0 # cm
 outter_diameter = 60 # cm
-throat_diameter = 20 # cm
-inner_diameter = 60 # cm
+throat_diameter = 5 # cm
+inner_diameter = 30 # cm
 
 grosor_pared_interior = 5.0 # cm
 grosor_fluido_exterior = 5.0 # cm
