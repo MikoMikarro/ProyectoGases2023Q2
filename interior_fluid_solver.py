@@ -198,14 +198,14 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
                         T_cont = Tout_p
                     
                     # Case where shockwave occurs inside nozzle
-                    if p_cont < 0.4 * p_in_exterior and i < len(iteration_slices) - 1 and shock_wave == False:
+                    if p_cont < 0.4 * p_in_exterior and i < len(iteration_slices) - 1: # and shock_wave == False:
                         pout = p_shock
                         vout = v_shock
                         Tout = T_shock
                         shock_wave = True
 
                     # Case where shockwave occurs outside the nozzle                    
-                    elif p_cont < p_in_exterior and i == len(iteration_slices) - 1 and shock_wave == False:
+                    elif p_cont < p_in_exterior and i == len(iteration_slices) - 1: # and shock_wave == False:
                         pout = p_shock
                         vout = v_shock
                         Tout = T_shock
