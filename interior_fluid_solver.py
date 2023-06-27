@@ -21,6 +21,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
     iteration_slices[0].T_interior_fluid = T_in_interior
     iteration_slices[0].v_interior_fluid = v_in_interior
     iteration_slices[0].rho_interior_fluid = p_in_interior / (T_in_interior * Rg)
+
     m_dot = iteration_slices[0].cross_section_interior_fluid * iteration_slices[0].rho_interior_fluid * v_in_interior
     iteration_slices[0].M_interior_fluid = v_in_interior / np.sqrt(Rg * gamma * T_in_interior)
     print("Mass flow: ", m_dot)
@@ -134,7 +135,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
                 print(" ")
 
             # If negative discriminant return nonsense value
-            if B**2 - 4 * A * C < 0:
+            if (B**2 - 4 * A * C) < 0:
                 print("error: negative discriminant in high mach flow")
                 iteration_slices[i].Tr_interior_fluid  = -1
                 iteration_slices[i].p_interior_fluid   = -1
@@ -157,11 +158,11 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
                 Tout_n = (Ce - vout_n**2 * Be) / Ae
 
                 # Generated entropy for each case
-                if ((Tout_p / iteration_slices[i].T_interior_fluid) and (pout_p / iteration_slices[i].p_interior_fluid)) > 0:
+                if ((Tout_p / iteration_slices[i].T_interior_fluid) > 0 ) and ((pout_p / iteration_slices[i].p_interior_fluid) > 0):
                     Sgen_p = cpi_avg * np.log(Tout_p / iteration_slices[i].T_interior_fluid) - Rg * np.log(pout_p / iteration_slices[i].p_interior_fluid)
                 else:
                     Sgen_p = -1
-                if ((Tout_n / iteration_slices[i].T_interior_fluid) and (pout_n / iteration_slices[i].p_interior_fluid)) > 0:
+                if ((Tout_n / iteration_slices[i].T_interior_fluid) > 0)  and ((pout_n / iteration_slices[i].p_interior_fluid) > 0):
                     Sgen_n = cpi_avg * np.log(Tout_n / iteration_slices[i].T_interior_fluid) - Rg * np.log(pout_n / iteration_slices[i].p_interior_fluid)
                 else:
                     Sgen_n = -1
