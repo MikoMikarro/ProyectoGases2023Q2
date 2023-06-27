@@ -72,6 +72,7 @@ def converge_interior_wall(slices, alpha_env, T_env):
             old_slice = start_slices[i]
             if old_slice.not_converges(new_slice):
                 print(old_slice.T_interior_wall, abs(old_slice.T_interior_wall - new_slice.T_interior_wall))
+                
                 converged = False
                 break
         
