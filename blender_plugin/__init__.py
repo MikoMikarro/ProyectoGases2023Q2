@@ -11,62 +11,43 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+
 bl_info = {
-    "name" : "tobera_blender",
-    "author" : "tobera_blender",
+    "name" : "RandomButton Uti",
+    "author" : "Miko Mikarro",
     "description" : "",
     "blender" : (2, 80, 0),
     "version" : (0, 0, 1),
-    "location" : "",
+    "location" : "View3D",
     "warning" : "",
-    "category" : "Generic"
+    "category" : "Object"
 }
 
+from email.policy import default
 import bpy
 
+from . plugin_panel import HelloWorldPanel
+from . plugin_operator import AssetImporter
+from bpy.props import StringProperty
+from bpy.types import Scene
 
-class MyAddonProperties(bpy.types.PropertyGroup):
-    path: bpy.props.StringProperty(subtype="FILE_PATH")
-
-
-class MyAddonOperator(bpy.types.Operator):
-    bl_idname = "object.my_addon_operator"
-    bl_label = "My Addon Operator"
-
-    # Define properties
-    path: bpy.props.StringProperty(subtype="FILE_PATH")
-
-    @classmethod
-    def poll(cls, context):
-        return context.object is not None
-
-    def execute(self, context):
-        # Perform your procedure with the selected path
-        print("Path:", self.path)
-        # Add your procedure code here
-
-        return {'FINISHED'}
-
-    def invoke(self, context, event):
-        # Open the file selector
-        context.window_manager.fileselect_add(self)
-        return {'RUNNING_MODAL'}
-
-
-classes = (MyAddonProperties, MyAddonOperator)
-
+classes = [
+    HelloWorldPanel,
+    AssetImporter,
+]
 
 def register():
-    for cls in classes:
-        bpy.utils.register_class(cls)
-    bpy.types.Scene.my_addon_props = bpy.props.PointerProperty(type=MyAddonProperties)
 
+    for new_class in classes:
+        bpy.utils.register_class(new_class)
+    
+    Scene.path_to_assets = StringProperty(name="Assets", subtype="FILE_PATH", default=r'C:\Users\lopez\Desktop\Universidad\5b\Gases\ProyectoGases2023Q2\data.yml')
 
 def unregister():
-    for cls in classes:
-        bpy.utils.unregister_class(cls)
-    del bpy.types.Scene.my_addon_props
-
+    
+    for registered_class in classes:
+        bpy.utils.unregister_class(registered_class)
+    del Scene.path_to_assets
 
 if __name__ == "__main__":
     register()
