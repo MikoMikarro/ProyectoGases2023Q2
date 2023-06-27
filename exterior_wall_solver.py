@@ -19,7 +19,7 @@ def converge_exterior_wall(slices, alpha_env, T_env):
             iteration_slice = deepcopy(start_slice)
                 
             alpha_int = iteration_slice.alpha_exterior_fluid
-            A_int = iteration_slice.lateral_area_interior_fluid
+            A_int = iteration_slice.lateral_area_exterior_fluid
             T_int = iteration_slice.T_exterior_fluid
 
             ad = alpha_int * A_int
@@ -34,9 +34,9 @@ def converge_exterior_wall(slices, alpha_env, T_env):
 
             d_e = slice.dx
             d_w = slice.dx
-            A_w = slice.cross_section_interior_wall
+            A_w = slice.cross_section_exterior_wall
             T_e = east_slice.T_exterior_wall
-            A_e = east_slice.cross_section_interior_wall
+            A_e = east_slice.cross_section_exterior_wall
 
             while True:
                 start_slice = deepcopy(iteration_slice)
