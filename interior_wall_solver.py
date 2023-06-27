@@ -4,9 +4,15 @@ from copy import deepcopy
 def converge_interior_wall(slices, alpha_env, T_env):
 
     iteration_slices = deepcopy(slices)
+    start_slices = deepcopy(iteration_slices)
     while True:
         
-        start_slices = deepcopy(iteration_slices)
+        for i in range(len(start_slices)):
+            old_temp = start_slices[i].T_interior_wall
+            new_temp = iteration_slices[i].T_interior_wall
+            delta_T = new_temp - old_temp
+            start_slices[i].T_interior_wall = 1.1*delta_T + old_temp
+
         iteration_slices = deepcopy(start_slices)
         
         for i, slice in enumerate(iteration_slices[:-1]):
@@ -65,6 +71,7 @@ def converge_interior_wall(slices, alpha_env, T_env):
         for i, new_slice in enumerate(iteration_slices):
             old_slice = start_slices[i]
             if old_slice.not_converges(new_slice):
+                print(old_slice.T_interior_wall, abs(old_slice.T_interior_wall - new_slice.T_interior_wall))
                 converged = False
                 break
         
