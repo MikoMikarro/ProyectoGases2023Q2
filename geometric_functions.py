@@ -24,6 +24,7 @@ class Slice:
         self.Tr_interior_fluid      = 0
         self.rho_interior_fluid     = 0
         self.v_interior_fluid       = 0
+        self.M_interior_fluid       = 0
 
         self.T_interior_wall        = 1000
 

@@ -251,7 +251,7 @@ def converge_interior_fluid(slices, p_in_interior, T_in_interior, v_in_interior,
                     print(" ")
                     time.sleep(1)
                 if conv_value < convergence_T:
-                    print("V at exit: ", iteration_slices[i+1].v_interior_fluid)
+                    print("T at exit: ", iteration_slices[i+1].T_interior_fluid)
 
                     break
     
